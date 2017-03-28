@@ -19,16 +19,16 @@ var numUsers = 0;
 var numGuests = 0;
 const clientlist = [];
 
+var db;
+dbClient.connect(url, function (err, tempdb) {
+	db = tempdb;
+});
+
 io.on('connection', function(socket) {
-
-  dbClient.connect(url, function (err, db) {
-
-    console.log("Connected sucessfully to database.");
 
     var profiles = db.collection('userProfile');
     var records = db.collection('talkingRecord');
     var userpassword = "";
-
 
     socket.on('guest login',function(){
       numGuests+=1;
@@ -69,6 +69,7 @@ io.on('connection', function(socket) {
       io.emit('user left',{
          username: socket.username
       });
+      removeuserlist();
       io.emit('update userlist', getuserlist());
     });
 
@@ -122,6 +123,14 @@ io.on('connection', function(socket) {
       return usersList;
     };
 
+    var removeuserlist = function() {
+      for (let i = 0; i < clientlist.length; i += 1) {
+        if(socket.username == clientlist[i].username){
+        	clientlist.splice(i,1);
+        }
+      }
+    };
+
     var findRecords = function (db, callback) {
       //var records = db.collection('talkingRecord');
       records.find({}).toArray(function (err, docs) {
@@ -153,8 +162,6 @@ io.on('connection', function(socket) {
             return str1+" "+str2;
     };
 
-
-  }); //end database
 }); //end io
 
 http.listen(3000, function(){

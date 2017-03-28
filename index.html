@@ -82,7 +82,6 @@
         });
 
         function appendnotice(msg){
-         
           var newdiv = $('<div class="message"></div>').text(msg);
           $('#messages').append(newdiv);
           var body = document.getElementById("body");
@@ -92,21 +91,21 @@
         }
 
         function AppendMessage(data){
-          var my_tool;
-
-          //$('#messages').append(my_tool);
-          //$('.tooltip').tooltipster();
           if(data.u_name==name){
             var newdiv = $('<div class="tooltip my_message"></div>')
               .prop("title", data.u_time)
               .text(data.u_word);
-            //my_tool.appendChild(newdiv);
+            var msg = data.u_name + ":";
+            var whosays = $('<div class="my_says"></div>').text(msg);
           }
           else{
             var newdiv = $('<div class="tooltip other_message"></div>')
               .prop("title", data.u_time)
               .text(data.u_word);
+            var msg = data.u_name + ":";
+            var whosays = $('<div class="other_says"></div>').text(msg);
           }
+          $('#messages').append(whosays);
           $('#messages').append(newdiv);
           $('.tooltip').tooltipster();
 
