@@ -173,7 +173,6 @@ io.on('connection', function(socket) {
         var str2 = myhour + ":" + myminute + ":" + mysecond;
         return str1 + " " + str2;
     };
-
 }); //end io
 
 http.listen((process.env.PORT || 3000), function() {

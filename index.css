@@ -1,153 +1,153 @@
 @import url(https://fonts.googleapis.com/css?family=Lato:400,700);
-
 $green: #86BB71;
 $blue: #94C2ED;
 $orange: #E38968;
 $gray: #92959E;
-
-*, *:before, *:after {
-  box-sizing: border-box;
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
 }
 
 body {
-  background: #C5DDEB;
-  font: 14px/20px "Lato", Arial, sans-serif;
-  padding: 20px 0;
-  color: white;
+    background: #C5DDEB;
+    font: 14px/20px "Lato", Arial, sans-serif;
+    padding: 20px 0;
+    color: white;
 }
 
 #message_block {
-  margin-right: 250px;
-  background: #F2F5F8;
-  color: #434651;
+    margin-right: 250px;
+    background: #F2F5F8;
+    color: #434651;
 }
 
 #onlinelist {
-  position: fixed;
-  border-top-right-radius: 5px;
-  color: #434651;
-  top: 30px;
-  right: 0;
-  width: 250px;
+    position: fixed;
+    border-top-right-radius: 5px;
+    color: #434651;
+    top: 30px;
+    right: 0;
+    width: 250px;
 }
 
 #onlinelist h2 {
-  padding-left: 20px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid gray;
+    padding-left: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid gray;
 }
 
 #onlinelist li {
-  list-style-type: none;
-  font-size: 18px;
+    list-style-type: none;
+    font-size: 18px;
 }
 
 #message_header {
-  border-top-right-radius: 5px;
-  border-top-left-radius: 5px;
-  border-top: 0.8px solid gray;
-  border-left: 0.8px solid gray;
-  border-right: 0.8px solid gray;
-  border-bottom: 2px solid gray;
-  width:100%;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top: 0.8px solid gray;
+    border-left: 0.8px solid gray;
+    border-right: 0.8px solid gray;
+    border-bottom: 2px solid gray;
+    width: 100%;
 }
 
 #message_history {
-  width: 100%;
-  border-left: 0.8px solid gray;
-  border-right: 0.8px solid gray;
-  border-bottom: 2px solid gray;
-  /*overflow-y: scroll;*/
-  min-height: 420px;
+    width: 100%;
+    border-left: 0.8px solid gray;
+    border-right: 0.8px solid gray;
+    border-bottom: 2px solid gray;
+    /*overflow-y: scroll;*/
+    min-height: 420px;
 }
 
 #message_type {
-  width: 100%;
-  padding: 0px;
+    width: 100%;
+    padding: 0px;
 }
 
 .message {
-  padding: 10px;
+    padding: 10px;
 }
 
 .my_message {
-  color: white;
-  padding: 18px 20px;
-  line-height: 26px;
-  font-size: 16px;
-  border-radius: 7px;
-  margin-bottom: 5px;
-  width: auto;
-  max-width: 30%;
-  position: relative;
-  left: 65%;
-  background: #86BB71;
+    color: white;
+    padding: 18px 20px;
+    line-height: 26px;
+    font-size: 16px;
+    border-radius: 7px;
+    margin-bottom: 5px;
+    width: auto;
+    max-width: 30%;
+    position: relative;
+    left: 65%;
+    background: #86BB71;
 }
 
 .other_message {
-  color: white;
-  padding: 18px 20px;
-  line-height: 26px;
-  font-size: 16px;
-  border-radius: 7px;
-  margin-bottom: 5px;
-  width: auto;
-  max-width: 30%;
-  position: relative;
-  left: 2.5%;
-  background: #94C2ED;
+    color: white;
+    padding: 18px 20px;
+    line-height: 26px;
+    font-size: 16px;
+    border-radius: 7px;
+    margin-bottom: 5px;
+    width: auto;
+    max-width: 30%;
+    position: relative;
+    left: 2.5%;
+    background: #94C2ED;
 }
 
 .my_says {
-  color: black;
-  padding: 5px;
-  line-height: 16px;
-  font-size: 12px;
-  margin-bottom: 5px;
-  width: auto;
-  position: relative;
-  left: 65%;
+    color: black;
+    padding: 5px;
+    line-height: 16px;
+    font-size: 12px;
+    margin-bottom: 5px;
+    width: auto;
+    position: relative;
+    left: 65%;
 }
 
 .other_says {
-  color: black;
-  padding: 5px;
-  line-height: 16px;
-  font-size: 12px;
-  margin-bottom: 5px;
-  width: auto;
-  position: relative;
-  left: 2.5%;
+    color: black;
+    padding: 5px;
+    line-height: 16px;
+    font-size: 12px;
+    margin-bottom: 5px;
+    width: auto;
+    position: relative;
+    left: 2.5%;
 }
 
 .private_chat {
-  font-size: 16px;
-  border-radius: 7px;
-  margin-bottom: 5px;
-  position: fixed;
-  right:0;
-  bottom:0;
-  background: #86BB71;
+    font-size: 16px;
+    border-radius: 7px;
+    margin-bottom: 5px;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    background: #86BB71;
 }
 
 form {
-  background: #C5DDEB;
-  padding: 0px;
-  position: relative;
-  top: 0;
-  width: 100%;
-  height: 40px;
+    background: #C5DDEB;
+    padding: 0px;
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: 40px;
 }
 
 form input {
-  border: 0;
-  padding: 10px;
-  width: 89%;
+    border: 0;
+    padding: 10px;
+    width: 89%;
 }
 
 form button {
-  width: 8.8%;
-  background: #E38968;
-  border: none;
-  padding: 10px;
+    width: 8.8%;
+    background: #E38968;
+    border: none;
+    padding: 10px;
 }
