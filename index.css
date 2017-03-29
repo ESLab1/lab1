@@ -67,7 +67,7 @@ body {
 }
 
 .message {
-  left:10px;
+  padding: 10px;
 }
 
 .my_message {
@@ -118,6 +118,16 @@ body {
   width: auto;
   position: relative;
   left: 2.5%;
+}
+
+.private_chat {
+  font-size: 16px;
+  border-radius: 7px;
+  margin-bottom: 5px;
+  position: fixed;
+  right:0;
+  bottom:0;
+  background: #86BB71;
 }
 
 form {

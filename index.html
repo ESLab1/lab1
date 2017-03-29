@@ -1,29 +1,27 @@
 <!doctype html>
 <html>
-
-<head>
+  <head>
     <title>Chat room</title>
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" type="text/css" href="tooltipster.bundle.min.css" />
-</head>
-
-<body id="body">
+  </head>
+  <body id="body">
     <div id="message_block">
-        <section id="message_header">
-            <h2>聊天室</h2>
-        </section>
-        <section id="message_history">
-            <div id="messages"></div>
-        </section>
-        <section id="message_type">
-            <form id="textbox">
-                <input id="m" autocomplete="off" /><button>Send</button>
-            </form>
-        </section>
+      <section id="message_header">
+        <h2>聊天室</h2>
+      </section>
+      <section id="message_history">
+        <div id="messages"></div>
+      </section>
+      <section id="message_type">
+        <form id="textbox">
+          <input id="m" autocomplete="off" /><button>Send</button>
+        </form>
+      </section>
     </div>
     <div id="onlinelist">
-        <h2 id="members">在線名單</h2>
-        <ul id="userlist"></ul>
+      <h2 id="members">在線名單</h2>
+      <ul id="userlist"></ul>
     </div>
 
 
@@ -31,126 +29,153 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script type="text/javascript" src="tooltipster.bundle.min.js"></script>
     <script>
-        $(function() {
 
-            var socket = io();
-            var name;
-            login();
+      $(function () {
 
-            $('#textbox').submit(function() {
-                if ($('#m').val() != '') {
-                    socket.emit('chat message', $('#m').val()); //display message
-                    $('#m').val(''); // clean input
-                }
-                return false;
-            });
+        var socket = io();
+        var name;
+        login();
 
-            socket.on('relogin', function() {
-                alert("此帳號已從別處登入，請用其他帳號重新登入！");
-                login();
-            });
-
-            socket.on('wrong password', function() {
-                alert("密碼錯誤，請重新登入！");
-                login();
-            });
-
-            socket.on('chat message', function(data) {
-                //appendMessage(data.username+":"+data.msg);
-                AppendMessage(data);
-            });
-
-            socket.on('add record', function(data) {
-                //appendMessage(data.u_name+":"+data.u_word);
-                AppendMessage(data);
-            });
-
-            socket.on('set guestnum', function(num) {
-                if (num != 1)
-                    name += num;
-            });
-
-            socket.on('update userlist', function(userlist) {
-                updateuserlist(userlist);
-            });
-
-            socket.on('add user', function(data) {
-                appendnotice(data.username + "已加入");
-            });
-
-            socket.on('user left', function(data) {
-                appendnotice(data.username + "已離開");
-            });
-
-            function appendnotice(msg) {
-                var newdiv = $('<div class="message"></div>').text(msg);
-                $('#messages').append(newdiv);
-                var body = document.getElementById("body");
-                var his = document.getElementById("message_history");
-                body.scrollTop = body.scrollHeight;
-                his.scrollTop = his.scrollHeight;
-            }
-
-            function AppendMessage(data) {
-                if (data.u_name == name) {
-                    var newdiv = $('<div class="tooltip my_message"></div>')
-                        .prop("title", data.u_time)
-                        .text(data.u_word);
-                    var msg = data.u_name + ":";
-                    var whosays = $('<div class="my_says"></div>').text(msg);
-                } else {
-                    var newdiv = $('<div class="tooltip other_message"></div>')
-                        .prop("title", data.u_time)
-                        .text(data.u_word);
-                    var msg = data.u_name + ":";
-                    var whosays = $('<div class="other_says"></div>').text(msg);
-                }
-                $('#messages').append(whosays);
-                $('#messages').append(newdiv);
-                $('.tooltip').tooltipster();
-
-                var body = document.getElementById("body");
-                var his = document.getElementById("message_history");
-                body.scrollTop = body.scrollHeight;
-                his.scrollTop = his.scrollHeight;
-            }
-
-            function login() {
-                name = prompt("請輸入帳號（或輸入guest以訪客登入）\n第一次登入的帳密會自動註冊", "guest");
-                if (name == "" || name == null || name == "guest") {
-                    name = "guest";
-                    socket.emit("guest login");
-                }
-                if (name != "guest") {
-                    var password = prompt("請輸入密碼", "");
-
-                    while (password === "" || password === null) {
-                        password = prompt("no password!!!", "");
-                    }
-
-                    socket.emit("user login", {
-                        username: name,
-                        userpassword: password //profile
-                    });
-                }
-
-            }; //end of function login
-            function updateuserlist(userlist) {
-                const list = document.getElementById('userlist');
-                list.innerHTML = '';
-
-                for (let i = 0; i < userlist.length; i += 1) {
-                    const item = document.createElement('li');
-                    if (userlist[i] === name) {
-                        item.innerHTML = userlist[i] + "(You)";
-                    } else {
-                        item.innerHTML = userlist[i];
-                    }
-                    list.appendChild(item);
-                }
-            };
+        $('#textbox').submit(function(){
+          if($('#m').val()!=''){
+            socket.emit('chat message', $('#m').val()); //display message
+            $('#m').val(''); // clean input
+          }
+          return false;
         });
-    </script>
-</body>
 
+        socket.on('relogin', function(){
+          alert("此帳號已從別處登入，請用其他帳號重新登入！");
+          login();
+        });
+
+        socket.on('wrong password', function(){
+          alert("密碼錯誤，請重新登入！");
+          login();
+        });
+
+        socket.on('chat message', function(data){
+          //appendMessage(data.username+":"+data.msg);
+          AppendMessage(data);
+        });
+
+        socket.on('onetoone chat', function(msg){
+          var body = document.getElementById("body");
+          var newdiv = document.createElement("div");
+          var header = document.createElement("h3");
+          var content = document.createElement("section");
+
+          newdiv.innerHTML = '<div class="private_chat"></div>';
+          header.innerHTML = '<h3>'+msg+'</h3>';
+          content.innerHTML = '<div></div></section><section><form><input autocomplete="off"/><button>Send</button></form>';
+          newdiv.appendChild(header);
+          newdiv.appendChild(content);
+          body.appendChild(newdiv);
+        });
+
+        socket.on('add record', function(data){
+          //appendMessage(data.u_name+":"+data.u_word);
+          AppendMessage(data);
+        });
+
+        socket.on('set guestnum', function(num){
+          if(num!=1)
+            name += num;
+        });
+
+        socket.on('update userlist', function(userlist){
+          updateuserlist(userlist);
+        });
+
+        socket.on('add user', function(data){
+          appendnotice(data.username+"已加入");
+        });
+
+        socket.on('user left', function(data){
+          appendnotice(data.username+"已離開");
+        });
+
+        function appendnotice(msg){
+          var newdiv = $('<div class="message"></div>').text(msg);
+          $('#messages').append(newdiv);
+          var body = document.getElementById("body");
+          var his = document.getElementById("message_history");
+          body.scrollTop = body.scrollHeight;
+          his.scrollTop = his.scrollHeight;
+        }
+
+        function AppendMessage(data){
+          if(data.u_name==name){
+            var newdiv = $('<div class="tooltip my_message"></div>')
+              .prop("title", data.u_time)
+              .text(data.u_word);
+            var msg = data.u_name + ":";
+            var whosays = $('<div class="my_says"></div>').text(msg);
+          }
+          else{
+            var newdiv = $('<div class="tooltip other_message"></div>')
+              .prop("title", data.u_time)
+              .text(data.u_word);
+            var msg = data.u_name + ":";
+            var whosays = $('<div class="other_says"></div>').text(msg);
+          }
+          $('#messages').append(whosays);
+          $('#messages').append(newdiv);
+          $('.tooltip').tooltipster();
+
+          var body = document.getElementById("body");
+          var his = document.getElementById("message_history");
+          body.scrollTop = body.scrollHeight;
+          his.scrollTop = his.scrollHeight;
+        }
+
+        function login() {
+          name = prompt("請輸入帳號（或輸入guest以訪客登入）\n第一次登入的帳密會自動註冊","guest");
+          if(name == "" || name==null || name=="guest"){
+            name = "guest";
+            socket.emit("guest login");
+          }
+          if(name != "guest") {
+            var password = prompt("請輸入密碼","");
+
+            while(password==="" || password===null)
+            {
+               password = prompt("no password!!!","");
+            }
+
+            socket.emit("user login",{
+              username: name,
+              userpassword: password //profile
+            });
+          }
+
+        };//end of function login
+        function updateuserlist(userlist) {
+          const list = document.getElementById('userlist');
+          list.innerHTML = '';
+
+          for (let i = 0; i < userlist.length; i += 1) {
+            const item = document.createElement('li');
+            if (userlist[i] === name) {
+              item.innerHTML = userlist[i]+"(You)";
+            }
+            else {
+              item.innerHTML = userlist[i];
+            }
+            item.addEventListener('mouseenter',function(){
+            	item.style.color = "red";
+            });
+            item.addEventListener('mouseleave',function(){
+            	item.style.color = "black";
+            });
+            item.addEventListener('click',function(){
+            	socket.emit('private chat',userlist[i]);
+            });
+            list.appendChild(item);
+          }
+        };
+      });
+
+    </script>
+  </body>
 </html>
