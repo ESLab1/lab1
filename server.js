@@ -12,8 +12,8 @@ var assert = require('assert');
 
 app.use(express.static(__dirname));
 
-var url = 'mongodb://admin:123@ds145289.mlab.com:45289/eslab1db';
-//var url = 'mongodb://derek:850211@ds145359.mlab.com:45359/eslab1_db';
+//var url = 'mongodb://admin:123@ds145289.mlab.com:45289/eslab1db';
+var url = 'mongodb://derek:850211@ds145359.mlab.com:45359/eslab1_db';
 
 var numUsers = 0;
 var numGuests = 0;
@@ -26,15 +26,15 @@ dbClient.connect(url, function(err, tempdb) {
 
 io.on('connection', function(socket) {
 
-    var profiles = db.collection('userProfile');
-    var records = db.collection('talkingRecord');
+    var profiles = db.collection('userProfile'); //user profiles
+    var records = db.collection('talkingRecord'); //talking records
     var userpassword = "";
 
     socket.on('guest login', function() {
         numGuests += 1;
         if (numGuests == 1) { socket.username = "guest"; } else {
             socket.username = "guest";
-            socket.username += numGuests;
+            socket.username += numGuests; //guest,guest2,guest3...
         }
         socket.emit('set guestnum', numGuests);
         adduser();
@@ -43,7 +43,6 @@ io.on('connection', function(socket) {
     socket.on('user login', function(profile) {
         checkuser(profile);
         findRecords(db, function(docs) {
-
             if (docs.length != 0) {
                 for (var i in docs) {
                     addrecord(docs[i]);
@@ -52,22 +51,22 @@ io.on('connection', function(socket) {
         }); //end of findRecords
     });
 
-    socket.on('chat message', function(msg) {
+    socket.on('chat message', function(msg) { //receive msg from client
         console.log(socket.username + ":" + msg);
         var mytime = mygetTime();
         io.emit('chat message', {
             u_name: socket.username,
             u_word: msg,
             u_time: mytime
-        });
-        records.insert({ u_name: socket.username, u_word: msg, u_time: mytime }); //insert record to db.
+        }); //when 'chat message'
+        records.insert({ u_name: socket.username, u_word: msg, u_time: mytime }); //insert talking records to db.
     });
 
-    socket.on('private chat', function(msg) {
-        console.log(socket.username + " want to chat with " + msg);
-        var target = findsocket(msg);
-        socket.emit('onetoone chat', msg);
-        target.emit('onetoone chat', socket.username);
+    socket.on('private chat', function(user2) { // user1 chat with user2
+        console.log(socket.username + " want to chat with " + user2);
+        var target = findsocket(user2);
+        socket.emit('onetoone chat', user2);
+        target.emit('onetoone chat', socket.username); //onetoone chat
     });
 
     socket.on('disconnect', function() {
@@ -75,12 +74,12 @@ io.on('connection', function(socket) {
         io.emit('user left', {
             username: socket.username
         });
-        removeuserlist();
+        removeuserlist(); //update userlist
         io.emit('update userlist', getuserlist());
     });
 
     //functions
-    var checkuser = function(user) {
+    var checkuser = function(user) { //login
         var userlist = getuserlist();
         for (let i = 0; i < userlist.length; i += 1) {
             if (userlist[i] == user.username) {
@@ -99,7 +98,7 @@ io.on('connection', function(socket) {
                     console.log("wrong password");
                     socket.emit('wrong password');
                 }
-            } else { //update user profile to the db
+            } else { //new user, update user profile to the db
                 profiles.insert({ username: user.username, password: user.userpassword });
                 socket.username = user.username;
                 console.log("new user '" + socket.username + "' sign up");
@@ -131,19 +130,17 @@ io.on('connection', function(socket) {
         for (let i = 0; i < clientlist.length; i += 1) {
             if (socket.username == clientlist[i].username) {
                 clientlist.splice(i, 1);
-            }
+            } //remove logout users
         }
     };
 
     var findRecords = function(db, callback) {
-        //var records = db.collection('talkingRecord');
         records.find({}).toArray(function(err, docs) {
             callback(docs);
         });
-    };
+    }; //get all records 
 
     var addrecord = function(data) {
-        //console.log( data.u_name+":"+data.u_word+"...is already in db" );
         socket.emit('add record', {
             u_name: data.u_name,
             u_word: data.u_word,
@@ -163,9 +160,11 @@ io.on('connection', function(socket) {
         var Today = new Date();
         var str1 = Today.getFullYear() + "/" + (Today.getMonth() + 1) + "/" + Today.getDate();
 
-        var myhour = Today.getHours();
+        var myhour = Today.getHours() + 8; //jet lag +8hr for Taiwan
         var myminute = Today.getMinutes();
         var mysecond = Today.getSeconds();
+        if (myhour >= 24) myhour = myhour - 24;
+
         if (myhour < 10) myhour = "0" + myhour;
         if (myminute < 10) myminute = "0" + myminute;
         if (mysecond < 10) mysecond = "0" + mysecond;

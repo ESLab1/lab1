@@ -30,10 +30,11 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script type="text/javascript" src="tooltipster.bundle.min.js"></script>
     <script>
-        $(function() {
-
+        $(function() { //for client
             var socket = io();
             var name;
+            const pri_chatlist = [];
+
             login();
 
             $('#textbox').submit(function() {
@@ -59,18 +60,32 @@
                 AppendMessage(data);
             });
 
-            socket.on('onetoone chat', function(msg) {
+            socket.on('onetoone chat', function(user2) {
+                console.log("private_chat!!!");
+
                 var body = document.getElementById("body");
                 var newdiv = document.createElement("div");
                 var header = document.createElement("h3");
                 var content = document.createElement("section");
 
                 newdiv.innerHTML = '<div class="private_chat"></div>';
-                header.innerHTML = '<h3>' + msg + '</h3>';
-                content.innerHTML = '<div></div></section><section><form><input autocomplete="off"/><button>Send</button></form>';
+                header.innerHTML = '<h3>' + user2 + '</h3>';
+                content.innerHTML = '<div></div></section><section><form id="pritextbox"><input id="pri" autocomplete="off"/><button>Send</button></form>';
+                //  content.innerHTML = '<button>Send</button></form>';
                 newdiv.appendChild(header);
                 newdiv.appendChild(content);
                 body.appendChild(newdiv);
+            });
+
+            $('#pritextbox').submit(function() {
+                /*
+                if ($('#pri').val() != '') {
+                    socket.emit('chat message', $('#pri').val()); //display message
+                    $('#pri').val(''); // clean input
+                }
+                */
+                //return false;
+                console.log("sent private message is here!!!");
             });
 
             socket.on('add record', function(data) {
@@ -166,7 +181,7 @@
                         item.style.color = "black";
                     });
                     item.addEventListener('click', function() {
-                        socket.emit('private chat', userlist[i]);
+                        socket.emit('private chat', userlist[i]); //when click mouse, private chat
                     });
                     list.appendChild(item);
                 }
