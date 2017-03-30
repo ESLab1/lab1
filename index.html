@@ -84,14 +84,20 @@
                 newdiv.className = "private_chat";
                 message.id = user2;
                 header.className = "private_header";
-                header.innerHTML =  user2;
+                if(user2==name){
+                  header.innerHTML =  user2+"(Yourself)";
+                }
+                else {
+                  header.innerHTML =  user2;
+                }
                 content.className = "private_content";
                 form.className = "private_form";
                 input.className = "private_input";
                 button.className = "private_button";
                 button.innerHTML = "Send";
-                form.id = "form";
+                form.id = "form"+user2;
                 input.id = "input"+user2;
+                content.id = "content"+user2;
                 form.appendChild(input);
                 form.appendChild(button);
                 form.addEventListener('submit',function(e){
@@ -141,9 +147,8 @@
             function appendnotice(msg) {
                 var newdiv = $('<div class="message"></div>').text(msg);
                 $('#messages').append(newdiv);
-                var body = document.getElementById("body");
+
                 var his = document.getElementById("message_history");
-                body.scrollTop = body.scrollHeight;
                 his.scrollTop = his.scrollHeight;
             }
 
@@ -165,9 +170,7 @@
                 $('#messages').append(newdiv);
                 $('.tooltip').tooltipster();
 
-                var body = document.getElementById("body");
                 var his = document.getElementById("message_history");
-                body.scrollTop = body.scrollHeight;
                 his.scrollTop = his.scrollHeight;
             }
 
@@ -187,8 +190,9 @@
                   var msg = data.from + ":";
                   var who = $('<div class="pri_other_says"></div>').text(msg);
                 }
-                //$('#'+target).append(who);
                 $('#'+target).append(div);
+                var con = document.getElementById("content"+target);
+                con.scrollTop = con.scrollHeight;
             }
 
             function login() {
