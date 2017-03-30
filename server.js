@@ -51,6 +51,7 @@ io.on('connection', function(socket) {
         }); //end of findRecords
     });
 
+
     socket.on('chat message', function(msg) { //receive msg from client
         console.log(socket.username + ":" + msg);
         var mytime = mygetTime();
@@ -71,11 +72,12 @@ io.on('connection', function(socket) {
 
     socket.on('disconnect', function() {
         console.log(socket.username + " left.");
-        io.emit('user left', {
+        io.emit('user left', { //io.emit?
             username: socket.username
         });
         removeuserlist(); //update userlist
         io.emit('update userlist', getuserlist());
+
     });
 
     //functions

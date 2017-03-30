@@ -34,12 +34,7 @@
             var socket = io();
             var name;
 
-            if (getCookie("loggedIn")) {
-                //do not login;
-            } else {
-                login();
-                document.cookie = "loggedIn=1; path=/";
-            }
+            login();
 
             //delete cookie
             // document.cookie = "loggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -122,7 +117,7 @@
                 newdiv.innerHTML = '<div class="private_chat"></div>';
                 header.innerHTML = '<h3>' + user2 + '</h3>';
                 content.innerHTML = '<div></div></section><section><form id = "abc"><input id="pri" autocomplete="off"/><button>Send</button></form>';
-
+                //has bug here
                 newdiv.appendChild(header);
                 newdiv.appendChild(content);
                 tmp_body.appendChild(newdiv);
@@ -150,6 +145,11 @@
 
             socket.on('user left', function(data) {
                 appendnotice(data.username + "已離開");
+                //delete cookie
+                //document.cookie = "loggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                //document.cookie = "loggedIn=0; path=/";
+                document.cookie = "current_usename=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = "current_password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             });
 
             function appendnotice(msg) {
@@ -186,24 +186,39 @@
             }
 
             function login() {
-                name = prompt("請輸入帳號（或輸入guest以訪客登入）\n第一次登入的帳密會自動註冊", "guest");
-                if (name == "" || name == null || name == "guest") {
-                    name = "guest";
-                    socket.emit("guest login");
-                }
-                if (name != "guest") {
-                    var password = prompt("請輸入密碼", "");
-
-                    while (password === "" || password === null) {
-                        password = prompt("no password!!!", "");
-                    }
+                if (getCookie("loggedIn") == 1) {
+                    name = getCookie("current_username");
+                    password = getCookie("current_password");
 
                     socket.emit("user login", {
                         username: name,
-                        userpassword: password //profile
+                        userpassword: password
                     });
+                } else {
+                    name = prompt("請輸入帳號（或輸入guest以訪客登入）\n第一次登入的帳密會自動註冊", "guest");
+                    if (name == "" || name == null || name == "guest") {
+                        name = "guest";
+                        socket.emit("guest login");
+                    }
+                    if (name != "guest") {
+                        var password = prompt("請輸入密碼", "");
+                        document.cookie = 'current_username=' + name + ';path=/';
+                        document.cookie = "loggedIn=1; path=/";
+                        while (password === "" || password === null) {
+                            password = prompt("no password!!!", "");
+                        }
+                        document.cookie = 'current_password=' + password + ';path=/';
+                        socket.emit("user login", {
+                            username: name,
+                            userpassword: password //profile
+                        });
+                    }
                 }
             };
+
+
+
+
 
             function updateuserlist(userlist) {
                 const list = document.getElementById('userlist');
