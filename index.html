@@ -150,9 +150,9 @@
             socket.on('user left', function(data) {
                 appendnotice(data.username + "已離開");
                 //delete cookie
-                document.cookie = "loggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                document.cookie = "current_usename=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                document.cookie = "current_password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                //document.cookie = "loggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                //document.cookie = "current_usename=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                //document.cookie = "current_password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             }); //not sure if it delete cookie successfully
 
             function appendnotice(msg) {
