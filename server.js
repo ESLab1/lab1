@@ -12,8 +12,8 @@ var assert = require('assert');
 
 app.use(express.static(__dirname));
 
-//var url = 'mongodb://admin:123@ds145289.mlab.com:45289/eslab1db';
-var url = 'mongodb://derek:850211@ds145359.mlab.com:45359/eslab1_db';
+var url = 'mongodb://admin:123@ds145289.mlab.com:45289/eslab1db';
+//var url = 'mongodb://derek:850211@ds145359.mlab.com:45359/eslab1_db';
 
 var numUsers = 0;
 var numGuests = 0;
@@ -41,8 +41,7 @@ io.on('connection', function(socket) {
     });
 
     socket.on('user login', function(profile) {
-        var isrelogin = profile.userisrelogin;
-        checkuser(profile, isrelogin);
+        checkuser(profile);
         findRecords(db, function(docs) {
             if (docs.length != 0) {
                 for (var i in docs) {
@@ -51,7 +50,6 @@ io.on('connection', function(socket) {
             }
         }); //end of findRecords
     });
-
 
     socket.on('chat message', function(msg) { //receive msg from client
         console.log(socket.username + ":" + msg);
@@ -75,36 +73,34 @@ io.on('connection', function(socket) {
         var target = findsocket(data.to);
         var mytime = mygetTime();
         socket.emit('private send', {
-            from: socket.username,
-            to: target.username,
-            msg: data.msg,
-            time: mytime
+          from: socket.username,
+          to: target.username,
+          msg: data.msg,
+          time: mytime
         });
         target.emit('private send', {
-            from: socket.username,
-            to: target.username,
-            msg: data.msg,
-            time: mytime
+          from: socket.username,
+          to: target.username,
+          msg: data.msg,
+          time: mytime
         });
     });
 
     socket.on('disconnect', function() {
         console.log(socket.username + " left.");
-        io.emit('user left', { //io.emit?
+        io.emit('user left', {
             username: socket.username
         });
         removeuserlist(); //update userlist
         io.emit('update userlist', getuserlist());
-
     });
 
     //functions
-    var checkuser = function(user, isrelogin) { //login
+    var checkuser = function(user) { //login
         var userlist = getuserlist();
         for (let i = 0; i < userlist.length; i += 1) {
             if (userlist[i] == user.username) {
-                if (isrelogin != 1)
-                    socket.emit('relogin');
+                socket.emit('relogin');
             }
         }
 
@@ -123,8 +119,7 @@ io.on('connection', function(socket) {
                 profiles.insert({ username: user.username, password: user.userpassword });
                 socket.username = user.username;
                 console.log("new user '" + socket.username + "' sign up");
-                if (isrelogin != 1)
-                    adduser();
+                adduser();
             }
         });
     }; //end of checkuser
@@ -160,7 +155,7 @@ io.on('connection', function(socket) {
         records.find({}).toArray(function(err, docs) {
             callback(docs);
         });
-    }; //get all records 
+    }; //get all records
 
     var addrecord = function(data) {
         socket.emit('add record', {

@@ -17,7 +17,8 @@
         </section>
         <section id="message_type">
             <form id="textbox">
-                <input id="m" autocomplete="off" /><button>Send</button>
+                <input id="m" autocomplete="off"/>
+                <button>Send</button>
             </form>
         </section>
     </div>
@@ -33,54 +34,8 @@
         $(function() { //for client
             var socket = io();
             var name;
-
+            //const pri_chatlist = [];
             login();
-
-            //delete cookie
-            // document.cookie = "loggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-
-            //if already logged in
-            /*
-            document.cookie = "loggedIn=1; path=/"; //write
-            document.cookie = "iAmBoy=1; path=/";
-            */
-
-            /*
-            loggedIn = getCookie("loggedIn");
-            iAmBoy = getCookie("iAmBoy");
-
-            function getCookie(cname) { //read
-                var name = cname + "=";
-                var decodedCookie = decodeURIComponent(document.cookie);
-                var ca = decodedCookie.split(';');
-                for(var i = 0; i <ca.length; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) == ' ') {
-                        c = c.substring(1);
-                    }
-                    if (c.indexOf(name) == 0) {
-                        return c.substring(name.length, c.length);
-                    }
-                }
-                return "";
-            }
-            */
-            function getCookie(cname) { //read
-                var name = cname + "=";
-                var decodedCookie = decodeURIComponent(document.cookie);
-                var ca = decodedCookie.split(';');
-                for (var i = 0; i < ca.length; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) == ' ') {
-                        c = c.substring(1);
-                    }
-                    if (c.indexOf(name) == 0) {
-                        return c.substring(name.length, c.length);
-                    }
-                }
-                return "";
-            }
 
             $('#textbox').submit(function() {
                 if ($('#m').val() != '') {
@@ -90,26 +45,30 @@
                 return false;
             });
 
+            /*$('#form').submit(function() {
+              if ($('#input').val() != '') {
+                  socket.emit('private chat message', {
+                    to: user2,
+                    msg: $('#input').val()
+                  });
+                  $('#input').val('');
+              }
+              return false;
+            });*/
+
             socket.on('relogin', function() {
-                if (getCookie(loggdeIn) == 1) {
-                    //refresh only, not relogin
-                } else {
-                    alert("此帳號已從別處登入，請用其他帳號重新登入！");
-                    login();
-                }
+                alert("此帳號已從別處登入，請用其他帳號重新登入！");
+                login();
             });
 
             socket.on('wrong password', function() {
                 alert("密碼錯誤，請重新登入！");
-                document.cookie = "loggedIn=0; path=/";
                 login();
             });
 
             socket.on('chat message', function(data) {
-                //appendMessage(data.username+":"+data.msg);
                 AppendMessage(data);
             });
-
 
             socket.on('onetoone chat', function(user2) {
                 console.log("private_chat!!!");
@@ -117,32 +76,39 @@
                 var newdiv = document.createElement("div");
                 var header = document.createElement("h3");
                 var content = document.createElement("section");
+                var newsec = document.createElement("section");
                 var form = document.createElement("form");
                 var input = document.createElement("input");
                 var button = document.createElement("button");
                 newdiv.className = "private_chat";
                 content.id = user2;
                 header.className = "private_header";
-                header.innerHTML = user2;
+                header.innerHTML =  user2;
                 content.className = "private_content";
                 form.className = "private_form";
-                input.className = "private_input";
+                /*input.className = "private_input";
                 button.className = "private_button";
                 button.innerHTML = "Send";
+                form.id = "form";
+                input.id = "input";
                 form.appendChild(input);
-                form.appendChild(button);
-                form.addEventListener('submit', function() {
-                    if ($('.private_input').val() != '') {
-                        socket.emit('private chat message', {
-                            to: user2,
-                            msg: $('.private_input').val()
-                        });
-                        $('.private_input').val('');
-                    }
+                form.appendChild(button);*/
+                //form.id = "pri_form";
+                form.innerHTML = '<input class="private_input" id = "input" autocomplete="off"/><button type="button" class= "private_button">Send</button>';
+                form.addEventListener('submit',function(e){
+                  if ($('.private_input').val() != '') {
+                      socket.emit('private chat message', {
+                        to: user2,
+                        msg: $('.private_input').val()
+                      });
+                      $('.private_input').val('');
+                  }
+                  e.preventDefault();
                 });
+                newsec.appendChild(form);
                 newdiv.appendChild(header);
                 newdiv.appendChild(content);
-                newdiv.appendChild(form);
+                newdiv.appendChild(newsec);
                 body.appendChild(newdiv);
             });
 
@@ -150,10 +116,7 @@
                 AppendPriMessage(data);
             });
 
-
-
             socket.on('add record', function(data) {
-                //appendMessage(data.u_name+":"+data.u_word);
                 AppendMessage(data);
             });
 
@@ -172,11 +135,7 @@
 
             socket.on('user left', function(data) {
                 appendnotice(data.username + "已離開");
-                //delete cookie
-                document.cookie = "loggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                document.cookie = "current_usename=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                document.cookie = "current_password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            }); //not sure if it delete cookie successfully
+            });
 
             function appendnotice(msg) {
                 var newdiv = $('<div class="message"></div>').text(msg);
@@ -211,61 +170,41 @@
                 his.scrollTop = his.scrollHeight;
             }
 
-            function login() {
-                if (getCookie("loggedIn") == 1) {
-                    name = getCookie("current_username");
-                    password = getCookie("current_password");
-                    var isrelogin = getCookie("loggedIn");
-                    socket.emit("user login", {
-                        username: name,
-                        userpassword: password,
-                        userisrelogin: isrelogin
-                    });
-                } else {
-                    name = prompt("請輸入帳號（或輸入guest以訪客登入）\n第一次登入的帳密會自動註冊", "guest");
-                    if (name == "" || name == null || name == "guest") {
-                        name = "guest";
-                        socket.emit("guest login");
-                    }
-                    if (name != "guest") {
-                        var password = prompt("請輸入密碼", "");
-
-                        while (password === "" || password === null) {
-                            password = prompt("no password!!!", "");
-                        }
-
-                        document.cookie = 'current_username=' + name + ';path=/';
-                        document.cookie = "loggedIn=1; path=/";
-
-                        var isrelogin = getCookie("loggedIn");
-                        document.cookie = 'current_password=' + password + ';path=/';
-                        socket.emit("user login", {
-                            username: name,
-                            userpassword: password, //profile
-                            userisrelogin: isrelogin
-                        });
-                    }
-                }
-            };
-
-
             function AppendPriMessage(data) {
                 if (data.from == name) {
-                    var content = document.getElementById(data.to);
-                    //var div = $('<div class="pri_my_message">');
-                    //div.innerHTML = data.msg;
-                    var msg = data.from + ":";
+                  var content = document.getElementById(data.to);
+                  var div = $('<div class="pri_my_message">');
+                  div.innerHTML = data.msg;
+                  var msg = data.from + ":";
                 } else {
-                    var content = document.getElementById(data.from);
-                    //var div = $('<div class="pri_other_message">');
-                    //div.innerHTML = data.msg;
-                    var msg = data.from + ":";
+                  var content = document.getElementById(data.from);
+                  var div = $('<div class="pri_other_message">');
+                  div.innerHTML = data.msg;
+                  var msg = data.from + ":";
                 }
                 content.append(msg);
                 content.append(data.msg);
             }
 
+            function login() {
+                name = prompt("請輸入帳號（或輸入guest以訪客登入）\n第一次登入的帳密會自動註冊", "guest");
+                if (name == "" || name == null || name == "guest") {
+                    name = "guest";
+                    socket.emit("guest login");
+                }
+                if (name != "guest") {
+                    var password = prompt("請輸入密碼", "");
 
+                    while (password === "" || password === null) {
+                        password = prompt("no password!!!", "");
+                    }
+
+                    socket.emit("user login", {
+                        username: name,
+                        userpassword: password //profile
+                    });
+                }
+            };
 
             function updateuserlist(userlist) {
                 const list = document.getElementById('userlist');
