@@ -91,7 +91,7 @@
             });
 
             socket.on('relogin', function() {
-                if (getCookie(loggdeIn)) {
+                if (getCookie(loggdeIn) == 1) {
                     //refresh only, not relogin
                 } else {
                     alert("此帳號已從別處登入，請用其他帳號重新登入！");
@@ -109,24 +109,46 @@
                 AppendMessage(data);
             });
 
+
             socket.on('onetoone chat', function(user2) {
-
-                //var body = document.getElementById("body");
-                var tmp_body = document.getElementById("message_block");
-
+                console.log("private_chat!!!");
+                var body = document.getElementById("body");
                 var newdiv = document.createElement("div");
                 var header = document.createElement("h3");
                 var content = document.createElement("section");
-
-                newdiv.innerHTML = '<div class="private_chat"></div>';
-                header.innerHTML = '<h3>' + user2 + '</h3>';
-                content.innerHTML = '<div></div></section><section><form id = "abc"><input id="pri" autocomplete="off"/><button>Send</button></form>';
-                //has bug here
+                var form = document.createElement("form");
+                var input = document.createElement("input");
+                var button = document.createElement("button");
+                newdiv.className = "private_chat";
+                content.id = user2;
+                header.className = "private_header";
+                header.innerHTML = user2;
+                content.className = "private_content";
+                form.className = "private_form";
+                input.className = "private_input";
+                button.className = "private_button";
+                button.innerHTML = "Send";
+                form.appendChild(input);
+                form.appendChild(button);
+                form.addEventListener('submit', function() {
+                    if ($('.private_input').val() != '') {
+                        socket.emit('private chat message', {
+                            to: user2,
+                            msg: $('.private_input').val()
+                        });
+                        $('.private_input').val('');
+                    }
+                });
                 newdiv.appendChild(header);
                 newdiv.appendChild(content);
-                tmp_body.appendChild(newdiv);
-
+                newdiv.appendChild(form);
+                body.appendChild(newdiv);
             });
+
+            socket.on('private send', function(data) {
+                AppendPriMessage(data);
+            });
+
 
 
             socket.on('add record', function(data) {
@@ -150,9 +172,9 @@
             socket.on('user left', function(data) {
                 appendnotice(data.username + "已離開");
                 //delete cookie
-                //document.cookie = "loggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                //document.cookie = "current_usename=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                //document.cookie = "current_password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = "loggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = "current_usename=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = "current_password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             }); //not sure if it delete cookie successfully
 
             function appendnotice(msg) {
@@ -223,6 +245,21 @@
             };
 
 
+            function AppendPriMessage(data) {
+                if (data.from == name) {
+                    var content = document.getElementById(data.to);
+                    //var div = $('<div class="pri_my_message">');
+                    //div.innerHTML = data.msg;
+                    var msg = data.from + ":";
+                } else {
+                    var content = document.getElementById(data.from);
+                    //var div = $('<div class="pri_other_message">');
+                    //div.innerHTML = data.msg;
+                    var msg = data.from + ":";
+                }
+                content.append(msg);
+                content.append(data.msg);
+            }
 
 
 

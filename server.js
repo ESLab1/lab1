@@ -64,11 +64,28 @@ io.on('connection', function(socket) {
         records.insert({ u_name: socket.username, u_word: msg, u_time: mytime }); //insert talking records to db.
     });
 
-    socket.on('private chat', function(msg) {
-        console.log(socket.username + " want to chat with " + msg);
-        var target = findsocket(msg);
-        socket.emit('onetoone chat', msg);
+    socket.on('private chat', function(user2) { // user1 chat with user2
+        console.log(socket.username + " want to chat with " + user2);
+        var target = findsocket(user2);
+        socket.emit('onetoone chat', user2);
         target.emit('onetoone chat', socket.username); //onetoone chat
+    });
+
+    socket.on('private chat message', function(data) {
+        var target = findsocket(data.to);
+        var mytime = mygetTime();
+        socket.emit('private send', {
+            from: socket.username,
+            to: target.username,
+            msg: data.msg,
+            time: mytime
+        });
+        target.emit('private send', {
+            from: socket.username,
+            to: target.username,
+            msg: data.msg,
+            time: mytime
+        });
     });
 
     socket.on('disconnect', function() {
@@ -86,7 +103,7 @@ io.on('connection', function(socket) {
         var userlist = getuserlist();
         for (let i = 0; i < userlist.length; i += 1) {
             if (userlist[i] == user.username) {
-                if (isrelogin)
+                if (isrelogin != 1)
                     socket.emit('relogin');
             }
         }
