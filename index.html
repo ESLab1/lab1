@@ -34,7 +34,7 @@
         $(function() { //for client
             var socket = io();
             var name;
-            //const pri_chatlist = [];
+            const pri_chatlist = [];
             login();
 
             $('#textbox').submit(function() {
@@ -76,40 +76,41 @@
                 var newdiv = document.createElement("div");
                 var header = document.createElement("h3");
                 var content = document.createElement("section");
+                var message = document.createElement("div");
                 var newsec = document.createElement("section");
                 var form = document.createElement("form");
                 var input = document.createElement("input");
                 var button = document.createElement("button");
                 newdiv.className = "private_chat";
-                content.id = user2;
+                message.id = user2;
                 header.className = "private_header";
                 header.innerHTML =  user2;
                 content.className = "private_content";
                 form.className = "private_form";
-                /*input.className = "private_input";
+                input.className = "private_input";
                 button.className = "private_button";
                 button.innerHTML = "Send";
                 form.id = "form";
-                input.id = "input";
+                input.id = "input"+user2;
                 form.appendChild(input);
-                form.appendChild(button);*/
-                //form.id = "pri_form";
-                form.innerHTML = '<input class="private_input" id = "input" autocomplete="off"/><button type="button" class= "private_button">Send</button>';
+                form.appendChild(button);
                 form.addEventListener('submit',function(e){
-                  if ($('.private_input').val() != '') {
+                  if ($('#'+"input"+user2).val() != '') {
                       socket.emit('private chat message', {
                         to: user2,
-                        msg: $('.private_input').val()
+                        msg: $('#'+"input"+user2).val()
                       });
-                      $('.private_input').val('');
+                      $('#'+"input"+user2).val('');
                   }
                   e.preventDefault();
                 });
                 newsec.appendChild(form);
+                content.appendChild(message);
                 newdiv.appendChild(header);
                 newdiv.appendChild(content);
                 newdiv.appendChild(newsec);
                 body.appendChild(newdiv);
+                pri_chatlist.push(user2);
             });
 
             socket.on('private send', function(data) {
@@ -172,18 +173,22 @@
 
             function AppendPriMessage(data) {
                 if (data.from == name) {
-                  var content = document.getElementById(data.to);
-                  var div = $('<div class="pri_my_message">');
-                  div.innerHTML = data.msg;
+                  var target = data.to;
+                  var div = $('<div class="pri_my_message"></div>')
+                    .prop("title", data.time)
+                    .text(data.msg);
                   var msg = data.from + ":";
+                  var who = $('<div class="pri_my_says"></div>').text(msg);
                 } else {
-                  var content = document.getElementById(data.from);
-                  var div = $('<div class="pri_other_message">');
-                  div.innerHTML = data.msg;
+                  var target = data.from;
+                  var div = $('<div class="pri_other_message"><div>')
+                    .prop("title", data.time)
+                    .text(data.msg);
                   var msg = data.from + ":";
+                  var who = $('<div class="pri_other_says"></div>').text(msg);
                 }
-                content.append(msg);
-                content.append(data.msg);
+                //$('#'+target).append(who);
+                $('#'+target).append(div);
             }
 
             function login() {
@@ -224,7 +229,15 @@
                         item.style.color = "black";
                     });
                     item.addEventListener('click', function() {
-                        socket.emit('private chat', userlist[i]); //when click mouse, private chat
+                        var flag = false;
+                        for(let j = 0; j<pri_chatlist.length; j+=1){
+                            if(userlist[i]==pri_chatlist[j]){
+                              flag = true;
+                            }
+                        }
+                        if(!flag){
+                          socket.emit('private chat', userlist[i]); //when click mouse, private chat
+                        }
                     });
                     list.appendChild(item);
                 }

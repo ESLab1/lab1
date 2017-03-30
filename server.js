@@ -65,25 +65,40 @@ io.on('connection', function(socket) {
     socket.on('private chat', function(user2) { // user1 chat with user2
         console.log(socket.username + " want to chat with " + user2);
         var target = findsocket(user2);
-        socket.emit('onetoone chat', user2);
-        target.emit('onetoone chat', socket.username); //onetoone chat
+        if(socket.username==target.username){
+           socket.emit('onetoone chat', user2);
+        }
+        else{
+           socket.emit('onetoone chat', user2);
+           target.emit('onetoone chat', socket.username); //onetoone chat
+        }
     });
 
     socket.on('private chat message', function(data) {
         var target = findsocket(data.to);
         var mytime = mygetTime();
-        socket.emit('private send', {
-          from: socket.username,
-          to: target.username,
-          msg: data.msg,
-          time: mytime
-        });
-        target.emit('private send', {
-          from: socket.username,
-          to: target.username,
-          msg: data.msg,
-          time: mytime
-        });
+        if(data.to==socket.username){
+          socket.emit('private send', {
+            from: socket.username,
+            to: socket.username,
+            msg: data.msg,
+            time: mytime
+          });
+        }
+        else{
+          socket.emit('private send', {
+            from: socket.username,
+            to: target.username,
+            msg: data.msg,
+            time: mytime
+          });
+          target.emit('private send', {
+            from: socket.username,
+            to: target.username,
+            msg: data.msg,
+            time: mytime
+          });
+        }
     });
 
     socket.on('disconnect', function() {

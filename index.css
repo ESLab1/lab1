@@ -78,9 +78,9 @@ body {
     border-radius: 7px;
     margin-bottom: 5px;
     width: auto;
-    max-width: 30%;
+    max-width: 20%;
     position: relative;
-    left: 65%;
+    left: 70%;
     background: #86BB71;
 }
 
@@ -92,7 +92,7 @@ body {
     border-radius: 7px;
     margin-bottom: 5px;
     width: auto;
-    max-width: 30%;
+    max-width: 20%;
     position: relative;
     left: 2.5%;
     background: #94C2ED;
@@ -106,7 +106,7 @@ body {
     margin-bottom: 5px;
     width: auto;
     position: relative;
-    left: 65%;
+    left: 70%;
 }
 
 .other_says {
@@ -123,26 +123,26 @@ body {
 .pri_my_message {
     color: white;
     padding: 2px 2px;
-    line-height: 18px;
-    font-size: 12px;
+    line-height: 20px;
+    font-size: 16px;
     border-radius: 7px;
     margin-bottom: 5px;
     width: auto;
-    max-width: 50%;
+    max-width: 30%;
     position: relative;
-    left: 65%;
+    left: 60%;
     background: #86BB71;
 }
 
 .pri_other_message {
     color: white;
     padding: 2px 2px;
-    line-height: 18px;
-    font-size: 12px;
+    line-height: 20px;
+    font-size: 16px;
     border-radius: 7px;
     margin-bottom: 5px;
     width: auto;
-    max-width: 50%;
+    max-width: 30%;
     position: relative;
     left: 2.5%;
     background: #94C2ED;
@@ -174,21 +174,26 @@ body {
     font-size: 16px;
     border-radius: 7px;
     position: relative;
+    margin-top: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
     width: 300px;
     height: 350px;
-    right: 0;
-    bottom: 0px;
+    right:10px;
+    bottom: 10px;
     background: #F2F5F8;
     color: #434651;
 }
 
 
 .private_header {
+    height: 25px;
     border-bottom: 2px solid gray;
 }
 
 .private_content {
     height: 300px;
+    border-bottom: 2px solid gray;
 }
 
 .private_form {
@@ -200,12 +205,13 @@ body {
 
 .private_input {
   border: 0;
-  padding: 10px;
-  width: 89%;
+  padding: 11px;
+  width: 70%;
 }
 
 .private_button {
-  width: 8.8%;
+  width: 22.5%;
+  height: 40px;
   background: #E38968;
   border: none;
   padding: 0px;
@@ -223,11 +229,11 @@ form {
 form input {
     border: 0;
     padding: 10px;
-    width: 89%;
+    width: 87%;
 }
 
 form button {
-    width: 8.8%;
+    width: 10%;
     background: #E38968;
     border: none;
     padding: 10px;
