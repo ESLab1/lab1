@@ -62,10 +62,10 @@ io.on('connection', function(socket) {
         records.insert({ u_name: socket.username, u_word: msg, u_time: mytime }); //insert talking records to db.
     });
 
-    socket.on('private chat', function(user2) { // user1 chat with user2
-        console.log(socket.username + " want to chat with " + user2);
-        var target = findsocket(user2);
-        socket.emit('onetoone chat', user2);
+    socket.on('private chat', function(msg) {
+        console.log(socket.username + " want to chat with " + msg);
+        var target = findsocket(msg);
+        socket.emit('onetoone chat', msg);
         target.emit('onetoone chat', socket.username); //onetoone chat
     });
 

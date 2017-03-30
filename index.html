@@ -33,9 +33,59 @@
         $(function() { //for client
             var socket = io();
             var name;
-            const pri_chatlist = [];
 
-            login();
+            if (getCookie("loggedIn")) {
+                //do not login;
+            } else {
+                login();
+                document.cookie = "loggedIn=1; path=/";
+            }
+
+            //delete cookie
+            // document.cookie = "loggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+
+            //if already logged in
+            /*
+            document.cookie = "loggedIn=1; path=/"; //write
+            document.cookie = "iAmBoy=1; path=/";
+            */
+
+            /*
+            loggedIn = getCookie("loggedIn");
+            iAmBoy = getCookie("iAmBoy");
+
+            function getCookie(cname) { //read
+                var name = cname + "=";
+                var decodedCookie = decodeURIComponent(document.cookie);
+                var ca = decodedCookie.split(';');
+                for(var i = 0; i <ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
+            */
+            function getCookie(cname) { //read
+                var name = cname + "=";
+                var decodedCookie = decodeURIComponent(document.cookie);
+                var ca = decodedCookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
 
             $('#textbox').submit(function() {
                 if ($('#m').val() != '') {
@@ -61,32 +111,24 @@
             });
 
             socket.on('onetoone chat', function(user2) {
-                console.log("private_chat!!!");
 
-                var body = document.getElementById("body");
+                //var body = document.getElementById("body");
+                var tmp_body = document.getElementById("message_block");
+
                 var newdiv = document.createElement("div");
                 var header = document.createElement("h3");
                 var content = document.createElement("section");
 
                 newdiv.innerHTML = '<div class="private_chat"></div>';
                 header.innerHTML = '<h3>' + user2 + '</h3>';
-                content.innerHTML = '<div></div></section><section><form id="pritextbox"><input id="pri" autocomplete="off"/><button>Send</button></form>';
-                //  content.innerHTML = '<button>Send</button></form>';
+                content.innerHTML = '<div></div></section><section><form id = "abc"><input id="pri" autocomplete="off"/><button>Send</button></form>';
+
                 newdiv.appendChild(header);
                 newdiv.appendChild(content);
-                body.appendChild(newdiv);
+                tmp_body.appendChild(newdiv);
+
             });
 
-            $('#pritextbox').submit(function() {
-                /*
-                if ($('#pri').val() != '') {
-                    socket.emit('chat message', $('#pri').val()); //display message
-                    $('#pri').val(''); // clean input
-                }
-                */
-                //return false;
-                console.log("sent private message is here!!!");
-            });
 
             socket.on('add record', function(data) {
                 //appendMessage(data.u_name+":"+data.u_word);
