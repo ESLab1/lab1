@@ -123,7 +123,8 @@ io.on('connection', function(socket) {
                 profiles.insert({ username: user.username, password: user.userpassword });
                 socket.username = user.username;
                 console.log("new user '" + socket.username + "' sign up");
-                adduser();
+                if (isrelogin != 1)
+                    adduser();
             }
         });
     }; //end of checkuser
