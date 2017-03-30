@@ -101,6 +101,7 @@
 
             socket.on('wrong password', function() {
                 alert("密碼錯誤，請重新登入！");
+                document.cookie = "loggedIn=0; path=/";
                 login();
             });
 
@@ -228,11 +229,14 @@
                     }
                     if (name != "guest") {
                         var password = prompt("請輸入密碼", "");
-                        document.cookie = 'current_username=' + name + ';path=/';
-                        document.cookie = "loggedIn=1; path=/";
+
                         while (password === "" || password === null) {
                             password = prompt("no password!!!", "");
                         }
+
+                        document.cookie = 'current_username=' + name + ';path=/';
+                        document.cookie = "loggedIn=1; path=/";
+
                         var isrelogin = getCookie("loggedIn");
                         document.cookie = 'current_password=' + password + ';path=/';
                         socket.emit("user login", {
