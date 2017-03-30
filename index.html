@@ -91,8 +91,12 @@
             });
 
             socket.on('relogin', function() {
-                alert("此帳號已從別處登入，請用其他帳號重新登入！");
-                login();
+                if (getCookie(loggdeIn)) {
+                    //refresh only, not relogin
+                } else {
+                    alert("此帳號已從別處登入，請用其他帳號重新登入！");
+                    login();
+                }
             });
 
             socket.on('wrong password', function() {
