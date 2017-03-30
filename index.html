@@ -150,8 +150,7 @@
             socket.on('user left', function(data) {
                 appendnotice(data.username + "已離開");
                 //delete cookie
-                //document.cookie = "loggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                //document.cookie = "loggedIn=0; path=/";
+                document.cookie = "loggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                 document.cookie = "current_usename=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                 document.cookie = "current_password=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             });
@@ -193,10 +192,11 @@
                 if (getCookie("loggedIn") == 1) {
                     name = getCookie("current_username");
                     password = getCookie("current_password");
-
+                    var isrelogin = getCookie("loggedIn");
                     socket.emit("user login", {
                         username: name,
-                        userpassword: password
+                        userpassword: password,
+                        userisrelogin: isrelogin
                     });
                 } else {
                     name = prompt("請輸入帳號（或輸入guest以訪客登入）\n第一次登入的帳密會自動註冊", "guest");
@@ -211,10 +211,12 @@
                         while (password === "" || password === null) {
                             password = prompt("no password!!!", "");
                         }
+                        var isrelogin = getCookie("loggedIn");
                         document.cookie = 'current_password=' + password + ';path=/';
                         socket.emit("user login", {
                             username: name,
-                            userpassword: password //profile
+                            userpassword: password, //profile
+                            userisrelogin: isrelogin
                         });
                     }
                 }

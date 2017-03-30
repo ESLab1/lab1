@@ -41,7 +41,8 @@ io.on('connection', function(socket) {
     });
 
     socket.on('user login', function(profile) {
-        checkuser(profile);
+        var isrelogin = profile.userisrelogin;
+        checkuser(profile, isrelogin);
         findRecords(db, function(docs) {
             if (docs.length != 0) {
                 for (var i in docs) {
@@ -81,11 +82,12 @@ io.on('connection', function(socket) {
     });
 
     //functions
-    var checkuser = function(user) { //login
+    var checkuser = function(user, isrelogin) { //login
         var userlist = getuserlist();
         for (let i = 0; i < userlist.length; i += 1) {
             if (userlist[i] == user.username) {
-                socket.emit('relogin');
+                if (isrelogin)
+                    socket.emit('relogin');
             }
         }
 
